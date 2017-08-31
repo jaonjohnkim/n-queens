@@ -16,15 +16,66 @@
 
 
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
-  console.log(this);
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  return solution;
+  // input : number
+  // output : matrix of our first solution, a valid array
+  // rooks don't care about diagonal, only row and col conflicts
+  
+  var board = new Board({n: n});
+  var solutionMatrix = [];
+  // console.log(board);
+  //Systematically switch 0 to 1, and check if these spots are valid
+    // if the spots have conflict, we need to swtich back to 0
+  for (var i = 0; i < board.attributes.n; i++) {
+    for (var j = 0; j < board.attributes.n; j++) {
+      // first place the 1
+      board.attributes[i][j] = 1;
+      // check for conflict
+      if (board.hasAnyRowConflicts() || board.hasAnyColConflicts()) {
+        // if conflict, then switch back tp 0
+        board.attributes[i][j] = 0;
+      }
+    }
+  } 
+  for (var key in board.attributes) {
+    if (key !== 'n') {
+      solutionMatrix.push(board.attributes[key]);
+    }
+  }
+  // console.log(solutionMatrix);
+  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solutionMatrix));
+  return solutionMatrix;
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+
+  if (n === 1) { return 1; }
+  var solutionCount = 0;
+  var recurse = function(board) {
+    var row = [];
+    for (var i = 0; i < n; i++) {
+      row.push(0);
+    }
+    for (var j = 0; j < n; j++) {
+      for (var k = 0; k < board.length + 1; k++) {
+        // console.log('board ', board);
+        if (board.length === 0 || board[k] !== undefined && board[k][j] !== 1) {
+          row[j] = 1;
+          if (board.length === n - 1) {
+            console.log('Single solution: ', JSON.stringify(board.concat([row])));
+            solutionCount++;
+          } else {
+            recurse(board.concat([row]));
+          }
+          // console.log('before resetting', row);
+          row[j] = 0;
+        }
+        // console.log('after resetting', row);
+      }
+    }
+  };
+  recurse([]);
+  // this.findNRooksSolution(n);
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;

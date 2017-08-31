@@ -95,25 +95,32 @@
           return true;
         }
       }
-      return false; // fixme
+      return false; 
     },
 
-
+    // hasRowConflictAt: function(rowIndex) {
+    //   console.log(this);
+    //   var currentRow = this.get(rowIndex); // [0, 1, 0, 0]
+    //   //check if there is more than 1 '1'
+    //   var queenCount = 0;
+    //   for (var i = 0; i < currentRow.length; i++) {
+    //     if (currentRow[i] === 1) {
+    //       queenCount++;
+    //     }
+    //   }
+    //   return (queenCount > 1) ? true : false;
+    // },
 
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      var colArr = _.map(this.attributes, function (array, i, collection) {
-        for (var j = 0; j < array.length; j++) {
-          if (j === colIndex) {
-            return array[j];
-          }
-        }
+      var colArr = _.map(this.attributes, function (array) {
+        return array[colIndex];
       });
       colArr = colArr.slice(0, colArr.length - 1);
-      // console.log(colArr);
+      //console.log(colArr);
       return this.checkConflict(colArr);
     },
 
@@ -135,9 +142,13 @@
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
       var majorDiagonal = [];
-      var rowCounter = 0;
+      var rowCounter = 0; // Vertical index
       for (var i = majorDiagonalColumnIndexAtFirstRow; i < this.attributes.n && rowCounter < this.attributes.n; i++) {
+        // i = Horizontal index
+        // Must increment horizontal and vertical index together
         var diagonalElement = this.get(rowCounter)[i];
+        //grab single diagonal element
+        //check if the diagonal element is legit
         if (diagonalElement !== undefined) {
           majorDiagonal.push(diagonalElement);
         }
