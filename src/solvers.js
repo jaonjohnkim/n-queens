@@ -52,8 +52,11 @@ window.countNRooksSolutions = function(n) {
   
   var board = new Board({n: n});
   
-  var recurse = function (rowIdx) {
+  var recurse = function (rowIdx, occupiedCols) {
     for (var i = 0; i < n; i++) {
+      if (occupiedCols.includes(i)) {
+        continue;
+      }
       board.togglePiece(rowIdx, i); // row[j] = 1;
       if (board.hasAnyColConflicts(i)) {
         //do nothing
@@ -61,15 +64,19 @@ window.countNRooksSolutions = function(n) {
         solutionCount++;
         
       } else {
-        recurse(rowIdx + 1);
+        // occupiedCols.push(i);
+        // occupiedCols = [0] 
+        // console.log('occupied columns, ', occupiedCols);
+        recurse(rowIdx + 1, occupiedCols.concat(i)); // array = [0, 1]
+        // occupiedCols = [0]
       }
       board.togglePiece(rowIdx, i); // row[j] = 0; 
     }
     
   };
-  recurse(0);
+  recurse(0, []);
   
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  // console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
 
