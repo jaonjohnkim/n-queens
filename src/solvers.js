@@ -54,7 +54,7 @@ window.countNRooksSolutions = function(n) {
   
   var recurse = function (rowIdx) {
     for (var i = 0; i < n; i++) {
-      board.togglePiece(rowIdx, i);
+      board.togglePiece(rowIdx, i); // row[j] = 1;
       if (board.hasAnyColConflicts(i)) {
         //do nothing
       } else if (rowIdx === n - 1) {
@@ -63,7 +63,7 @@ window.countNRooksSolutions = function(n) {
       } else {
         recurse(rowIdx + 1);
       }
-      board.togglePiece(rowIdx, i);
+      board.togglePiece(rowIdx, i); // row[j] = 0; 
     }
     
   };
@@ -78,30 +78,37 @@ window.findNQueensSolution = function(n) {
   
   if (n === 0) {
     return [];
-  } else if (n === 1) {
-    return [[1]];
   }
-  var solutionMatrix;
-  
-  var board = new Board({n: n});
-  
-  var recurse = function (rowIdx) {
-    for (var i = 0; i < n; i++) {
-      board.togglePiece(rowIdx, i);
-      if (board.hasAnyQueenConflictsOn(rowIdx, i)) {
-        //do nothing
-      } else if (rowIdx === n - 1) {
-        solutionMatrix = board.rows();
-      } else {
-        recurse(rowIdx + 1);
-      }
-      board.togglePiece(rowIdx, i);
-    }
-    
-  };
-  recurse(0);
 
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(board.rows()));
+  var solutionMatrix = [];
+  var board = new Board({n: n});
+  var foundSolution = false;
+
+  var confirmSolution = function(row) {
+    if (row === n) {
+      foundSolution = true;
+      console.log('Solution found! ', board.attributes);
+      return;
+    }
+    for (var col = 0; col < n; col++) {
+      board.get(row)[col] = 1;
+      if (!board.hasAnyQueenConflictsOn(row, col)) {
+        confirmSolution(row + 1); 
+      }
+      if (foundSolution) {
+        return;
+      }
+      board.get(row)[col] = 0;
+    }
+  };
+  confirmSolution(0);
+  for (var key in board.attributes) {
+    if (key !== 'n') {
+      solutionMatrix.push(board.attributes[key]);
+    }
+  }
+  // console.log(solutionMatrix);
+  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solutionMatrix));
   return solutionMatrix;
 };
 
